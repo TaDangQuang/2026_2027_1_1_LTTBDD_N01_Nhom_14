@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "796562944714",
+    "project_id": "libraryonline-d8c34",
+    "storage_bucket": "libraryonline-d8c34.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796562944714:android:18ef776a8e0bf1bf19ba33",
+        "android_client_info": {
+          "package_name": "com.example.thuvien_btl"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYdJbsUW-FTJudpft7aSDgDWDTaI_ELy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
