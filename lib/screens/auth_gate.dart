@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
-import 'login_screen.dart';
 
+// Quyết định hiện trang nào khi mở web:
+// - Chưa đăng nhập: vẫn hiện trang chủ (chế độ khách)
+// - Đã đăng nhập: hiện trang chủ kèm thông tin người dùng
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -18,8 +20,11 @@ class AuthGate extends StatelessWidget {
           return const _Loading();
         }
         final firebaseUser = authSnap.data;
-        if (firebaseUser == null) return const LoginScreen();
 
+        // Chưa đăng nhập -> trang chủ cho khách
+        if (firebaseUser == null) return const HomeScreen();
+
+        // Đã đăng nhập -> lấy hồ sơ trong Firestore
         return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('users')
@@ -36,9 +41,10 @@ class AuthGate extends StatelessWidget {
             }
             final user = UserModel.fromMap(docSnap.data!.data()!);
 
+            // Tài khoản bị khoá -> đăng xuất, quay về chế độ khách
             if (!user.isActive) {
               AuthService().logout();
-              return const LoginScreen();
+              return const HomeScreen();
             }
             return HomeScreen(user: user);
           },

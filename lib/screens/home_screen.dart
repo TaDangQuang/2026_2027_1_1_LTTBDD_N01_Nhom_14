@@ -3,6 +3,9 @@ import '../data/books_data.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import 'book_detail_screen.dart';
+import 'login_screen.dart';
+import 'register_screen.dart';
+import 'team_screen.dart';
 
 const Color mauChinh = Color(0xFF566A5C); // xanh xám
 
@@ -11,8 +14,8 @@ const Color mauChinh = Color(0xFF566A5C); // xanh xám
 const List<String> dsTheLoai = ['Thiếu nhi', 'Đời sống', 'Tiểu thuyết'];
 
 class HomeScreen extends StatefulWidget {
-  final UserModel user;
-  const HomeScreen({super.key, required this.user});
+  final UserModel? user; // null = khách chưa đăng nhập
+  const HomeScreen({super.key, this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -22,17 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
   String tuKhoa = ''; // chữ đang tìm kiếm
   String theLoai = 'Tất cả'; // thể loại đang chọn
 
-  // Mở trang chi tiết của cuốn sách được bấm
-  void xemChiTiet(Map<String, dynamic> sach) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => BookDetailScreen(sach: sach)),
-    );
+  // Mở một trang mới
+  void moTrang(Widget trang) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => trang));
   }
+
+  // Mở trang chi tiết của cuốn sách được bấm
+  void xemChiTiet(Map<String, dynamic> sach) =>
+      moTrang(BookDetailScreen(sach: sach));
 
   @override
   Widget build(BuildContext context) {
-    final rong = MediaQuery.of(context).size.width >= 1100;
+    final rong = MediaQuery.of(context).size.width >= 1250;
 
     // Lọc sách theo ô tìm kiếm và thể loại
     final dsSach = duLieuSach.where((s) {
@@ -108,32 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 32),
             tab('Trang chủ', 'Tất cả'),
             for (final t in dsTheLoai) tab(t, t),
+            tab('Thông tin nhóm', 'nhom'), // mở trang thông tin nhóm
             const Spacer(),
             SizedBox(width: 240, child: oTimKiem()),
             const SizedBox(width: 20),
-            PopupMenuButton<String>(
-              onSelected: (_) => AuthService().logout(),
-              itemBuilder: (_) => const [
-                PopupMenuItem(value: 'out', child: Text('Đăng xuất')),
-              ],
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: mauChinh, size: 20),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.user.displayName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            nutNguoiDung(),
           ],
         ),
       );
@@ -154,6 +137,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 onSelected: (v) {
                   if (v == 'out') {
                     AuthService().logout();
+                  } else if (v == 'login') {
+                    moTrang(const LoginScreen());
+                  } else if (v == 'register') {
+                    moTrang(const RegisterScreen());
+                  } else if (v == 'nhom') {
+                    moTrang(const TeamScreen());
                   } else {
                     setState(() => theLoai = v);
                   }
@@ -165,8 +154,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   for (final t in dsTheLoai)
                     PopupMenuItem(value: t, child: Text(t)),
+                  const PopupMenuItem(
+                    value: 'nhom',
+                    child: Text('Thông tin nhóm'),
+                  ),
                   const PopupMenuDivider(),
-                  const PopupMenuItem(value: 'out', child: Text('Đăng xuất')),
+                  // Khách thấy Đăng nhập / Đăng ký, người đã đăng nhập thấy Đăng xuất
+                  if (widget.user == null) ...const [
+                    PopupMenuItem(value: 'login', child: Text('Đăng nhập')),
+                    PopupMenuItem(value: 'register', child: Text('Đăng ký')),
+                  ] else
+                    const PopupMenuItem(value: 'out', child: Text('Đăng xuất')),
                 ],
               ),
             ],
@@ -178,11 +176,71 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Góc phải thanh điều hướng:
+  // - chưa đăng nhập: nút Đăng nhập + Đăng ký
+  // - đã đăng nhập: tên người dùng (bấm vào để đăng xuất)
+  Widget nutNguoiDung() {
+    final user = widget.user;
+
+    if (user == null) {
+      return Row(
+        children: [
+          TextButton(
+            onPressed: () => moTrang(const LoginScreen()),
+            child: const Text(
+              'Đăng nhập',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () => moTrang(const RegisterScreen()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: mauChinh,
+            ),
+            child: const Text('Đăng ký'),
+          ),
+        ],
+      );
+    }
+
+    return PopupMenuButton<String>(
+      onSelected: (_) => AuthService().logout(),
+      itemBuilder: (_) => const [
+        PopupMenuItem(value: 'out', child: Text('Đăng xuất')),
+      ],
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 16,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.person, color: mauChinh, size: 20),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            user.displayName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Một mục trên thanh điều hướng (bấm vào để lọc theo thể loại)
   Widget tab(String chu, String loai) {
     final chon = theLoai == loai;
     return InkWell(
-      onTap: () => setState(() => theLoai = loai),
+      onTap: () {
+        if (loai == 'nhom') {
+          moTrang(const TeamScreen()); // mục "Về chúng tôi" mở trang riêng
+        } else {
+          setState(() => theLoai = loai);
+        }
+      },
       child: Container(
         height: 70,
         alignment: Alignment.center,
@@ -280,7 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Chân trang
+  // ---------- Chân trang ----------
+
   Widget chanTrang() {
     return Container(
       width: double.infinity,
@@ -295,20 +354,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 spacing: 48,
                 runSpacing: 32,
                 children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 340),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        logo(),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Một góc nhỏ cho những tâm hồn yêu sách.\nĐọc, cảm nhận và lớn lên mỗi ngày.',
-                          style: TextStyle(color: Colors.white70, height: 1.7),
-                        ),
-                      ],
-                    ),
-                  ),
                   cotLienKet('Khám phá', [
                     'Sách mới',
                     'Sách nổi bật',

@@ -44,8 +44,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: password.text,
         displayName: ten.text.trim(),
       );
-      if (mounted)
-        Navigator.pop(context); // đóng trang, AuthGate tự vào trang chủ
+      // Đăng ký xong: đóng các trang đăng ký/đăng nhập, quay về trang chủ
+      if (mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
       return;
     } catch (e) {
       loi = 'Đăng ký thất bại, email có thể đã được dùng';

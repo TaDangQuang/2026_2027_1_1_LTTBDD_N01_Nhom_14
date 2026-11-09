@@ -35,6 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     try {
       await AuthService().login(_emailCtrl.text.trim(), _passCtrl.text);
+      // Đăng nhập xong: đóng trang này, quay về trang chủ
+      if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
+      return;
     } on FirebaseAuthException {
       _error = 'Email hoặc mật khẩu không đúng';
     } catch (e) {
