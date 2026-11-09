@@ -45,6 +45,10 @@ class AuthService {
     return user;
   }
 
+  // Gửi email đặt lại mật khẩu
+  Future<void> sendPasswordReset(String email) =>
+      _auth.sendPasswordResetEmail(email: email);
+
   Future<void> logout() => _auth.signOut();
 
   // Lấy thông tin user hiện tại (dùng khi mở lại app)

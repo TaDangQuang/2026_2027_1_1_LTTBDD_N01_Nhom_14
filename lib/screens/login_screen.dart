@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 
 const _green = Color(0xFF566A5C);
@@ -154,6 +155,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'Tối thiểu 6 ký tự'
                               : null,
                           onFieldSubmitted: (_) => _login(),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ForgotPasswordScreen(
+                                  initialEmail: _emailCtrl.text.trim(),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Quên mật khẩu?',
+                              style: TextStyle(color: _green),
+                            ),
+                          ),
                         ),
                         if (_error != null) ...[
                           const SizedBox(height: 12),
