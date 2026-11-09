@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
-import 'admin_home_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
@@ -41,9 +40,7 @@ class AuthGate extends StatelessWidget {
               AuthService().logout();
               return const LoginScreen();
             }
-            return user.isAdmin
-                ? AdminHomeScreen(user: user)
-                : HomeScreen(user: user);
+            return HomeScreen(user: user);
           },
         );
       },
