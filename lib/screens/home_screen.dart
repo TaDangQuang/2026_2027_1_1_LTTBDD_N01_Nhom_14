@@ -71,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  chanTrang(),
                 ],
               ),
             ),
@@ -333,66 +332,6 @@ class _HomeScreenState extends State<HomeScreen> {
             '${sach['author']}',
             style: const TextStyle(color: Colors.black54),
           ),
-        ],
-      ),
-    );
-  }
-
-  // ---------- Chân trang ----------
-
-  Widget chanTrang() {
-    return Container(
-      width: double.infinity,
-      color: const Color(0xFF2F3A34),
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1110),
-          child: Column(
-            children: [
-              Wrap(
-                spacing: 48,
-                runSpacing: 32,
-                children: [
-                  cotLienKet('Khám phá', [
-                    'Sách mới',
-                    'Sách nổi bật',
-                    'Về dự án',
-                  ]),
-                  cotLienKet('Hỗ trợ', [
-                    'Điều khoản sử dụng',
-                    'Chính sách bảo mật',
-                    'Liên hệ',
-                  ]),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Một cột liên kết trong chân trang
-  Widget cotLienKet(String tieuDe, List<String> muc) {
-    return SizedBox(
-      width: 170,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            tieuDe,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          for (final m in muc)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: Text(m, style: const TextStyle(color: Colors.white70)),
-            ),
         ],
       ),
     );

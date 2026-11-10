@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'reader_screen.dart';
 
 const Color _mauChinh = Color(0xFF566A5C);
 
@@ -10,9 +11,9 @@ class BookDetailScreen extends StatelessWidget {
 
   // Bấm nút "Đọc sách"
   void docSach(BuildContext context) {
-    // TODO: mở trang đọc PDF, đường dẫn file là sach['pdf'] (làm ở bước sau)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Trang đọc sách sẽ làm ở bước sau')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ReaderScreen(sach: sach)),
     );
   }
 
